@@ -359,6 +359,7 @@ func (c *clientConn) handleNetRecv() {
 
 		if pkt.Version() != c.protoVersion {
 			// protocol version not match, exit
+			c.parent.log.e("NET protocol versions do not match, ", pkt.Version(), " != ", c.protoVersion)
 			c.exit()
 			return
 		}
