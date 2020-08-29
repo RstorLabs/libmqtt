@@ -55,10 +55,9 @@ func Decode(version ProtoVersion, r BufferedReader) (Packet, error) {
 		case CtrlDisConn:
 			if version == V311 {
 				return &DisconnPacket{}, nil
-			} else {
-				// mqtt v5 has props
-				return nil, ErrDecodeBadPacket
 			}
+			// mqtt v5 has props
+			return nil, ErrDecodeBadPacket
 		default:
 			return nil, ErrDecodeBadPacket
 		}
@@ -116,21 +115,26 @@ func decodeV311Packet(header byte, body []byte) (Packet, error) {
 		}
 
 		if pkt.IsWill {
-			pkt.WillTopic, body, err = getStringData(body)
-			pkt.WillMessage, body, err = getBinaryData(body)
+			if pkt.WillTopic, body, err = getStringData(body); err != nil {
+				return nil, err
+			}
+			if pkt.WillMessage, body, err = getBinaryData(body); err != nil {
+				return nil, err
+			}
 		}
 
 		if hasUsername {
-			pkt.Username, body, err = getStringData(body)
+			if pkt.Username, body, err = getStringData(body); err != nil {
+				return nil, err
+			}
 		}
 
 		if hasPassword {
-			pkt.Password, _, err = getStringData(body)
+			if pkt.Password, _, err = getStringData(body); err != nil {
+				return nil, err
+			}
 		}
 
-		if err != nil {
-			return nil, err
-		}
 		return pkt, nil
 	case CtrlConnAck:
 		return &ConnAckPacket{Present: body[0]&0x01 == 0x01, Code: body[1]}, nil
@@ -256,20 +260,24 @@ func decodeV5Packet(header byte, body []byte) (Packet, error) {
 		}
 
 		if pkt.IsWill {
-			pkt.WillTopic, next, err = getStringData(next)
-			pkt.WillMessage, next, err = getBinaryData(next)
+			if pkt.WillTopic, next, err = getStringData(next); err != nil {
+				return nil, err
+			}
+			if pkt.WillMessage, next, err = getBinaryData(next); err != nil {
+				return nil, err
+			}
 		}
 
 		if hasUsername {
-			pkt.Username, next, err = getStringData(next)
+			if pkt.Username, next, err = getStringData(next); err != nil {
+				return nil, err
+			}
 		}
 
 		if hasPassword {
-			pkt.Password, _, err = getStringData(next)
-		}
-
-		if err != nil {
-			return nil, err
+			if pkt.Password, _, err = getStringData(next); err != nil {
+				return nil, err
+			}
 		}
 
 		pkt.ProtoVersion = V5
