@@ -52,21 +52,24 @@ func (p *PublishPacket) WriteTo(w BufferedWriter) error {
 	}
 
 	first := CtrlPublish<<4 | boolToByte(p.IsDup)<<3 | boolToByte(p.IsRetain) | p.Qos<<1
+
+	varHeader := encodeStringWithLen(p.TopicName)
+	if p.Qos > Qos0 {
+		varHeader = append(varHeader, byte(p.PacketID>>8), byte(p.PacketID))
+	}
+
 	switch p.Version() {
 	case V311:
-		return p.write(w, first, nil, p.payload())
+		return p.write(w, first, varHeader, p.payload())
 	case V5:
-		return p.writeV5(w, first, nil, p.Props.props(), p.payload())
+		return p.writeV5(w, first, varHeader, p.Props.props(), p.payload())
 	default:
 		return ErrUnsupportedVersion
 	}
 }
 
 func (p *PublishPacket) payload() []byte {
-	data := encodeStringWithLen(p.TopicName)
-	if p.Qos > Qos0 {
-		data = append(data, byte(p.PacketID>>8), byte(p.PacketID))
-	}
+	data := make([]byte, 0)
 	return append(data, p.Payload...)
 }
 
