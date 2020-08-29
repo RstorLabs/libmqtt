@@ -80,7 +80,8 @@ func (p propertySet) add(propKey byte, propValue interface{}) {
 		panic(fmt.Sprintf("unexpected property value type %T", v))
 	}
 
-	if v, ok := p[propKey]; ok {
+	if val != nil {
+		v := p[propKey]
 		p[propKey] = append(v, val)
 	}
 }
