@@ -331,74 +331,99 @@ func decodeV5Packet(header byte, body []byte) (Packet, error) {
 		pub.ProtoVersion = V5
 		return pub, nil
 	case CtrlPubAck:
-		if len(body) < 3 {
+		code := byte(0)
+
+		if len(body) < 2 {
 			return nil, ErrDecodeBadPacket
+		} else if len(body) > 2 {
+			code = body[2]
 		}
 
 		pkt := &PubAckPacket{
 			PacketID: getUint16(body),
-			Code:     body[2],
+			Code:     code,
 			Props:    &PubAckProps{},
 		}
 
-		props, _, err := getRawProps(body[3:])
-		if err != nil {
-			return nil, err
+		if len(body) > 3 {
+			props, _, err := getRawProps(body[3:])
+			if err != nil {
+				return nil, err
+			}
+			pkt.Props.setProps(props)
 		}
-		pkt.Props.setProps(props)
 		pkt.ProtoVersion = V5
 		return pkt, nil
 	case CtrlPubRecv:
-		if len(body) < 3 {
+		code := byte(0)
+
+		if len(body) < 2 {
 			return nil, ErrDecodeBadPacket
+		} else if len(body) > 2 {
+			code = body[2]
 		}
 
 		pkt := &PubRecvPacket{
 			PacketID: getUint16(body),
-			Code:     body[2],
+			Code:     code,
 			Props:    &PubRecvProps{},
 		}
 
-		props, _, err := getRawProps(body[3:])
-		if err != nil {
-			return nil, err
+		if len(body) > 3 {
+			props, _, err := getRawProps(body[3:])
+			if err != nil {
+				return nil, err
+			}
+			pkt.Props.setProps(props)
 		}
-		pkt.Props.setProps(props)
 		pkt.ProtoVersion = V5
 		return pkt, nil
 	case CtrlPubRel:
-		if len(body) < 3 {
+		code := byte(0)
+
+		if len(body) < 2 {
 			return nil, ErrDecodeBadPacket
+		} else if len(body) > 2 {
+			code = body[2]
 		}
 
 		pkt := &PubRelPacket{
 			PacketID: getUint16(body),
-			Code:     body[2],
+			Code:     code,
 			Props:    &PubRelProps{},
 		}
-		props, _, err := getRawProps(body[3:])
-		if err != nil {
-			return nil, err
+
+		if len(body) > 3 {
+			props, _, err := getRawProps(body[3:])
+			if err != nil {
+				return nil, err
+			}
+			pkt.Props.setProps(props)
 		}
-		pkt.Props.setProps(props)
 		pkt.ProtoVersion = V5
 		return pkt, nil
 	case CtrlPubComp:
-		if len(body) < 3 {
+		code := byte(0)
+
+		if len(body) < 2 {
 			return nil, ErrDecodeBadPacket
+		} else if len(body) > 2 {
+			code = body[2]
 		}
 
 		pkt := &PubCompPacket{
 			PacketID: getUint16(body),
-			Code:     body[2],
+			Code:     code,
 			Props:    &PubCompProps{},
 		}
 
-		props, _, err := getRawProps(body[3:])
-		if err != nil {
-			return nil, err
+		if len(body) > 3 {
+			props, _, err := getRawProps(body[3:])
+			if err != nil {
+				return nil, err
+			}
+			pkt.Props.setProps(props)
 		}
-		pkt.Props.setProps(props)
 		pkt.ProtoVersion = V5
 		return pkt, nil
 	case CtrlSubscribe:
