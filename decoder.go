@@ -56,6 +56,7 @@ func Decode(version ProtoVersion, r BufferedReader) (Packet, error) {
 			if version == V311 {
 				return &DisconnPacket{}, nil
 			}
+
 			// mqtt v5 has props
 			return nil, ErrDecodeBadPacket
 		default:
