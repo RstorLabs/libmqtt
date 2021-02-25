@@ -1,11 +1,11 @@
-module github.com/goiiot/libmqtt
+module github.com/RstorLabs/libmqtt
 
-go 1.13
+go 1.15
 
 require (
-	github.com/eclipse/paho.mqtt.golang v1.2.0
-	github.com/stretchr/testify v1.6.1
+	github.com/eclipse/paho.mqtt.golang v1.3.2
+	github.com/goiiot/libmqtt v0.9.6
+	github.com/stretchr/testify v1.7.0
 	go.uber.org/goleak v1.1.10
-	golang.org/x/net v0.0.0-20200930145003-4acb6c075d10 // indirect
 	nhooyr.io/websocket v1.8.6
 )
