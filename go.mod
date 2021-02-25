@@ -1,4 +1,4 @@
-module github.com/RstorLabs/libmqtt
+module github.com/rstorlabs/libmqtt
 
 go 1.15
 
